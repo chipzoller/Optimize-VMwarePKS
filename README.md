@@ -60,3 +60,9 @@ Author Information
 
 Authors: Chip Zoller and Luc Dekens
 Contact: @chipzoller and @LucD22
+
+
+To Do
+------------------
++ Add network folder organization
++ Scope operations down to specific vCenter Data center object
