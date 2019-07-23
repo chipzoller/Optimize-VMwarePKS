@@ -66,3 +66,4 @@ To Do
 ------------------
 + Add network folder organization
 + Scope operations down to specific vCenter Data center object
++ Update requirements
