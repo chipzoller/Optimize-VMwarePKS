@@ -58,7 +58,7 @@ $credvC = New-Object System.Management.Automation.PSCredential('administrator@vs
 $secPKSPass = ConvertTo-SecureString -String 'VMware1!' -asPlainText -Force
 $credPKS = New-Object System.Management.Automation.PSCredential('myuser',$secPKSPass)
 
-./Optimize-VMwarePKS.ps1 -ProcessFolders -ProcessTags -ProcessDRSRules -vCenter $vc -vCenterCredential $credvC -PKSSever $pks -PKSCredential $credPKS -Verbose
+./Optimize-VMwarePKS.ps1 -ProcessFolders -ProcessTags -ProcessDRSRules -vCenter $vc -vCenterCredential $credvC -PKSServer $pks -PKSCredential $credPKS -Verbose
 
 .EXAMPLE
 Clean-up folders and tags from deleted PKS deployments.
