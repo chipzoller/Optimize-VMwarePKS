@@ -68,7 +68,7 @@ Clean-up folders and tags from deleted PKS deployments.
 .EXAMPLE
 Combine both organize and clean-up into the same command.
 
-./Optimize-VMwarePKS.ps1 -ProcessFolders -ProcessTags -ProcessDRSRules -TidyFolders -TidyTags -vCenter $vc -vCenterCredential $credvC -PKSSever $pks -PKSCredential $credPKS
+./Optimize-VMwarePKS.ps1 -ProcessFolders -ProcessTags -ProcessDRSRules -TidyFolders -TidyTags -vCenter $vc -vCenterCredential $credvC -PKSServer $pks -PKSCredential $credPKS
 
 .NOTES
 The script has been written in an idempotent way such that it is safe to schedule on a recurring basis.
@@ -110,11 +110,11 @@ param(
 function Get-PksCluster {
     <#
 .SYNOPSIS
-        This function will get all the provisioned PKS clusters using the CLI tool and return them as PS Objects.
+        This function will get all the provisioned PKS clusters using the CLI tool and return them as PS Objects. Minimum supported version of PKS API server is v1.5.
 .DESCRIPTION
         This function will get the output of `pks clusters` and parse the output.
 .LINK
-        https://github.com/chipzoller/Get-PksCluster
+        http://github.com/chipzoller/Get-PksCluster
 .NOTES
         Chip Zoller
         @chipzoller
@@ -129,14 +129,16 @@ function Get-PksCluster {
         if ($Line -match "error") {
             throw "error"
         }
-        if ($Line.Length -ne 0 -and $Line -notmatch "Name\s+Plan") {
+        if ($Line.Length -ne 0 -and $Line -notmatch "PKS\s+Version") {
             $fields = $Line.Trim(' ') -split '\s+'
             $properties = @{
-                Name   = $fields[0]
-                Plan   = $fields[1]
-                UUID   = $fields[2]
-                Status = $fields[3]
-                Action = $fields[4]
+                PKSVersion = $fields[0]
+                Name   = $fields[1]
+                K8sVersion = $fields[2]
+                Plan   = $fields[3]
+                UUID   = $fields[4]
+                Status = $fields[5]
+                Action = $fields[6]
             }
             New-Object -TypeName PSObject -Property $properties
         }
@@ -175,7 +177,7 @@ if (-NOT $PKSCert -or -NOT $PKSCert.IsPresent) {
 }
 else {pks login -a $PKSServer -u $PKSUser -p $PKSPass --ca-cert $PKSCert}
 
-try {$AllPKSClusters = pks clusters | Get-PksCluster | Select-Object Name, UUID}
+try {$AllPKSClusters = (pks clusters) | Get-PksCluster | Select-Object Name, UUID}
 catch {$error[0]}
 if ($AllPKSClusters -contains 'error') {
     Throw "Error encountered getting list of clusters from PKS. Script will terminate."
