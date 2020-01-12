@@ -246,9 +246,12 @@ if ($ProcessTags) {
         }
         # Check if tag is assigned to VMs in deployment.
         $HasTag = $item.Group | Get-TagAssignment | Where-Object Tag -match $TagName -ErrorAction SilentlyContinue
-        if (-NOT $HasTag) {
-            Write-Verbose "Writing tag $TagName to nodes."
-            $item.Group | New-TagAssignment -Tag $TagName | Out-Null
+        foreach ($itemVM in $item.Group.Name){
+            $HasTag = Get-VM -Name $itemVM | Get-TagAssignment | Where-Object Tag -match $TagName -ErrorAction SilentlyContinue
+            if (-NOT $HasTag) {
+                Write-Verbose "Writing tag $TagName to $itemVM"
+                Get-VM -Name $itemVM | New-TagAssignment -Tag $TagName | Out-Null
+            }
         }
     }
 }
